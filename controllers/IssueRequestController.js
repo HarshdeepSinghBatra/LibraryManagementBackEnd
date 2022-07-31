@@ -2,7 +2,25 @@ const IssueRequestSchema = require('../models/IssueRequests.db')
 
 const getIssueRequests = async (req, res) => {
     try {
-        const requests = await IssueRequestSchema.find()
+        const requests = await IssueRequestSchema.find().populate("bookId")
+        res.send(requests)
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+const getIssueRequestsByUserIdAndBookId = async (req, res) => {
+    try {
+        const requests = await IssueRequestSchema.find({studentId: req.params.userId, bookId: req.params.bookId})
+        res.send(requests)
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+const getIssueRequestsByUserId = async (req, res) => {
+    try {
+        const requests = await IssueRequestSchema.find({studentId: req.params.userId}).populate("bookId")
         res.send(requests)
     } catch (err) {
         console.log(err)
@@ -27,10 +45,9 @@ const requestIssue = async (req, res) => {
 
 const handleRequest = async (req, res) => {
     try {
-        const { requestId, status } = req.body
+        const { requestId } = req.params
         const request = await IssueRequestSchema.findById(requestId)
-        request.status = status
-        await request.save()
+        request.remove()
 
         res.send('request handled')
     } catch (err) {
@@ -40,6 +57,8 @@ const handleRequest = async (req, res) => {
 
 module.exports = {
     getIssueRequests,
+    getIssueRequestsByUserId,
+    getIssueRequestsByUserIdAndBookId,
     requestIssue,
     handleRequest,
 }

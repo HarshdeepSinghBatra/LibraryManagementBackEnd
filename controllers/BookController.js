@@ -9,17 +9,27 @@ const getBooks = async (req, res) => {
     }
 }
 
+const getBookById = async (req, res) => {
+    try {
+        const book = await BookSchema.findById(req.params.bookId)
+        res.send(book);
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 const addBook = async (req, res) => {
     try {
-        const { name, author, quantity, genre } = req.body
+        const { title, author, quantity, category, description, image } = req.body
         const book = await BookSchema.create({
-            name,
-            author,
-            quantity,
-            genre,
+            title: title,
+            description: description,
+            image: image,
+            author: author,
+            quantity: quantity,
+            category: category,
         })
-
-        res.send('Book added' + book.name)
+        res.send('Book added: ' + book.title)
     } catch (err) {
         console.log(err)
     }
@@ -27,14 +37,15 @@ const addBook = async (req, res) => {
 
 const updateBook = async (req, res) => {
     try {
-        const { bookId, genre, name, author, quantity } = req.body
+        const { bookId, category, title, author, quantity, description } = req.body
         const book = await BookSchema.findById(bookId)
-        if (genre) book.genre = genre
-        if (name) book.name = name
+        if (category) book.category = category
+        if (title) book.title = title
         if (author) book.author = author
         if (quantity) book.quantity = quantity
+        if (description) book.description = description
         await book.save()
-        res.send('Book updated ' + book.name)
+        res.send(book)
     } catch (err) {
         console.log(err)
     }
@@ -42,7 +53,7 @@ const updateBook = async (req, res) => {
 
 const deleteBook = async (req, res) => {
     try {
-        const { bookId } = req.body
+        const { bookId } = req.params
         const book = await BookSchema.findById(bookId)
         book.remove()
         res.send('Book deleted')
@@ -53,12 +64,11 @@ const deleteBook = async (req, res) => {
 
 const searchBooks = async (req, res) => {
     try {
-        const { category, query } = req.query
-        const books = await BookSchema.find({
-            [category]: { $regex: query, $options: 'i' },
-        })
+        const key = Object.keys(req.query)[0]
+            const books = await BookSchema.find({
+                [key]: { $regex: req.query[key], $options: 'i' },
+            })
         
-        console.log(books)
         res.send(books)
     } catch (err) {
         console.log(err)
@@ -67,6 +77,7 @@ const searchBooks = async (req, res) => {
 
 module.exports = {
     getBooks,
+    getBookById,
     addBook,
     updateBook,
     deleteBook,

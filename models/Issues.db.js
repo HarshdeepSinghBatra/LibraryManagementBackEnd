@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 const issueSchema = new mongoose.Schema({
-    bookId: mongoose.SchemaTypes.ObjectId,
+    bookId: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "book"
+    },
     studentId: String,
     issueDate: {
         type: Date,

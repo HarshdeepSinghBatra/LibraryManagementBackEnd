@@ -1,13 +1,11 @@
-const res = require("express/lib/response");
 const mongoose = require("mongoose");
 const bookSchema = new mongoose.Schema({
-    name: String,
+    title: String,
     author: String,
-    genre: {
-        type: String,
-        lowercase: true
-    },
-    quantity: Number
+    category: String,
+    quantity: Number,
+    image: String,
+    description: String
 })
 
 bookSchema.pre("remove", async function (next) {
@@ -15,8 +13,7 @@ bookSchema.pre("remove", async function (next) {
         const IssueRequestModel = this.model("issuerequest")
         const requests = await IssueRequestModel.find({bookId: this._id})
         requests.forEach(request => {
-            request.status = 2
-            request.save()
+            request.remove()
         })
         next()
     } catch (err) {

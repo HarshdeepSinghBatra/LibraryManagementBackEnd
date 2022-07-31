@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 const issueHistorySchema = new mongoose.Schema({
-    bookId: mongoose.SchemaTypes.ObjectId,
+    bookId: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "book"
+    },
     studentId: String,
     issueDate: Date,
     fine: Number,

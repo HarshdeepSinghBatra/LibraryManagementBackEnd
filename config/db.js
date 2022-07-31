@@ -1,6 +1,9 @@
 const mongoose = require("mongoose")
-mongoose.connect("mongodb://localhost:27017/library_management_system", () => {
-    console.log("Connected to DB")
+mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.zqjxe.mongodb.net/${process.env.DB_DBNAME}?retryWrites=true&w=majority`, (err) => {
+    if (err) console.log(err)
+    else {
+        console.log("Connected to DB")
+    }
 })
 
 // async function main() {

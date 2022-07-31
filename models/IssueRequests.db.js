@@ -1,23 +1,18 @@
 const mongoose = require('mongoose')
 const issueRequestSchema = new mongoose.Schema({
-    bookId: mongoose.SchemaTypes.ObjectId,
+    bookId: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "book"
+    },
     studentId: String,
     requestDate: {
         type: Date,
         default: () => Date.now(),
-    },
-    status: {
-        type: Number,
-        default: 0,
-    },
+    }
 })
 
-issueRequestSchema.pre('save', async function (next) {
-    if (this.status != 1) {
-        next()
-        return
-    }
-    
+issueRequestSchema.pre('remove', async function (next) {
+
     const IssueModel = this.model('issue')
     try {
         const issue = await IssueModel.create({
